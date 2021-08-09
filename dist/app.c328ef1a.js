@@ -118,20 +118,36 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   return newRequire;
 })({"app.js":[function(require,module,exports) {
+var container = document.getElementById("root");
 var ajax = new XMLHttpRequest();
+var content = document.createElement("div");
 var NEWS_URL = "https://api.hnpwa.com/v0/news/1.json";
+var CONTENT_URL = "https://api.hnpwa.com/v0/item/@id.json";
 ajax.open("GET", NEWS_URL, false);
 ajax.send();
 var newsFeed = JSON.parse(ajax.response);
 var ul = document.createElement("ul");
+window.addEventListener("hashchange", function () {
+  var id = location.hash.substr(1);
+  ajax.open("GET", CONTENT_URL.replace("@id", id), false);
+  ajax.send();
+  var newsContent = JSON.parse(ajax.response);
+  var title = document.createElement("h1");
+  title.innerHTML = newsContent.title;
+  content.appendChild(title);
+});
 
 for (var i = 0; i < 10; i++) {
   var li = document.createElement("li");
-  li.innerHTML = newsFeed[i].title;
+  var a = document.createElement("a");
+  a.innerHTML = newsFeed[i].title;
+  a.href = "#".concat(newsFeed[i].id);
+  li.appendChild(a);
   ul.appendChild(li);
 }
 
-document.getElementById("root").appendChild(ul);
+container.appendChild(ul);
+container.appendChild(content);
 },{}],"C:/Users/skack/AppData/Roaming/nvm/v12.14.1/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
